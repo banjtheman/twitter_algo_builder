@@ -1,16 +1,12 @@
 # Python imports
-import json
 import logging
 import os
 from typing import Dict, Any, List
-import random
 
 import pandas as pd
 import twitter
 
 # my imports
-from algo_builder.function import Function
-from algo_builder.weighted_function import WeightedFunction
 from algo_builder.algorithm import Algorithm
 import algos
 
@@ -63,45 +59,6 @@ def get_home_timeline(num_tweets: int = 20) -> List[Dict[str, Any]]:
     return twitter_json_list
 
 
-def rand_func(tweet):
-    """
-    Purpose:
-        Return a random number between 0 and 100
-    Args:
-        N/A
-    Returns:
-        random number
-    """
-
-    return random.randint(0, 100)
-
-
-def define_algo() -> Algorithm:
-    """
-    Purpose:
-        Define algo
-    Args:
-        N/A
-    Returns:
-        algo
-    """
-
-    # Make a random function
-    rand_func_action = Function("Random Function", "Returns a random value", rand_func)
-
-    weighted_func2 = WeightedFunction(0.2, rand_func_action, "rand_func2")
-    weighted_func3 = WeightedFunction(0.3, rand_func_action, "rand_func3")
-    weighted_func5 = WeightedFunction(0.5, rand_func_action, "rand_func5")
-
-    rand_algo = Algorithm(
-        "Random algo",
-        "Return random score",
-        [weighted_func2, weighted_func3, weighted_func5],
-    )
-
-    return rand_algo
-
-
 def process_tweets(tweets: List[Dict[str, Any]], algo: Algorithm):
     """
     Purpose:
@@ -121,7 +78,7 @@ def process_tweets(tweets: List[Dict[str, Any]], algo: Algorithm):
 
         # Run all the functions in the algorithm
         for func in algo.functions:
-            print(func.get_name())
+            # print(func.get_name())
 
             curr_value = func.run_code(tweet)  # Run the code on the tweet
             tweet_values_json[func.get_name()] = curr_value  # store value
@@ -159,15 +116,13 @@ def main():
     timeline_tweets = get_home_timeline()
 
     # Define Algo
-    # rand_algo = define_algo()  ####### What builders will focus on
-    # rand_algo = algos.Random_3_algo.define_algo()
     rand_algo = algos.SimpleAlgo.define_algo()
+    rand_algo.save_algo()
 
     # Run algo on tweets
     df = process_tweets(timeline_tweets, rand_algo)
 
     print(df)
-
     print("Done and Done")
 
 

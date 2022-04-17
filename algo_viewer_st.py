@@ -4,22 +4,23 @@ Purpose:
 """
 
 # Python imports
-import random
 from typing import Type, Union, Dict, Any, List, Tuple
 import requests
+import glob
 
 # 3rd party imports
 import streamlit as st
 import streamlit.components.v1 as components
 from yellowbrick.target import FeatureCorrelation
 import pandas as pd
-import plotly.express as px
-import altair as alt
+
+# import plotly.express as px
+# import altair as alt
 
 # project imports
-import test_algo_runner
 import test_algo_builder
-import algos
+import algo_builder.utils as utils
+import algo_builder.algorithm
 
 
 def feature_correlation(df: pd.DataFrame) -> None:
@@ -87,18 +88,13 @@ def sidebar() -> None:
 
     st.sidebar.title("Twitter Algo Viewer")
 
-    pages = ["Home", "Playground", "Schedule", "Team"]
+    pages = ["Home"]
     default_page = 0
     page = st.sidebar.selectbox("Go To", options=pages, index=default_page)
 
     if page == "Home":
         home_page()
-    # elif page == "Playground":
-    #     playground_page()
-    # elif page == "Schedule":
-    #     schedule_page()
-    # elif page == "Team":
-    #     team_page()
+
     else:
         st.error("Invalid Page")
 
@@ -116,20 +112,33 @@ def home_page():
     st.title("Twitter Algo Viewer")
     st.subheader("Bring your own algo")
 
-    # # Select Algo
-    # algos = ["Random"]
-    # selected_algo = st.selectbox("Algorithms", algos)
+    algo_jsons = glob.glob("saved_algos/*.json")
+    # Algo metadata
+    algo_data_map = {}
 
-    # # Look in Algos folder
+    print(algo_jsons)
+    for algo_json in algo_jsons:
 
-    # # Show Algo
-    # code = """def rand_algo(tweets):
-    # """
-    # st.code(code, language="python")
+        algo_data = utils.load_json(algo_json)
 
-    # Button to get tweets
+        algo_name = algo_data["name"]
+        algo_desc = algo_data["desc"]
+        algo_path = algo_data["algo_path"]
 
-    # Have two cols, one for no aglo, one with algo
+        # make new entry in map
+        algo_data_map[algo_name] = {}
+        algo_data_map[algo_name]["desc"] = algo_desc
+        algo_data_map[algo_name]["algo"] = algo_path
+
+    # Get list of algos
+
+    print(algo_data_map)
+
+    # Select Algo
+    algos = list(algo_data_map.keys())
+    selected_algo = st.selectbox("Algorithms", algos)
+
+    # Have two cols, one for no aglo, one with algo?
 
     num_tweets = st.number_input(label="Number of tweets", value=20, max_value=200)
 
@@ -137,20 +146,19 @@ def home_page():
 
         # Get Raw tweets
         raw_tweets = test_algo_builder.get_home_timeline(num_tweets)
+        curr_algo_path = algo_data_map[selected_algo]["algo"]
 
-        ################ TODO: INPUT YOUR ALGO HERE ###############
-        # Define algo
-        # rand_algo = algos.Random_3_algo.define_algo()
+        try:
+            curr_algo = algo_builder.algorithm.load_algo(curr_algo_path)
+        except Exception as error:
+            st.error(error)
+            st.stop()
 
-        rand_algo = algos.SimpleAlgo.define_algo()
-
-        ################ TODO: INPUT YOUR ALGO HERE ###############
-
-        st.header(rand_algo.name)
-        st.subheader(rand_algo.desc)
+        st.header(curr_algo.name)
+        st.subheader(curr_algo.desc)
 
         # Run algo on tweets
-        df = test_algo_builder.process_tweets(raw_tweets, rand_algo)
+        df = test_algo_builder.process_tweets(raw_tweets, curr_algo)
 
         # st.write(sorted_df)
         st.subheader("Given Input Weights")
@@ -158,7 +166,7 @@ def home_page():
         col1, col2, col3 = st.columns(3)
         col_list = [col1, col2, col3]
 
-        for index, func in enumerate(rand_algo.functions):
+        for index, func in enumerate(curr_algo.functions):
 
             cur_col = index % 3  # Multipe of 3 for each weight
             col_list[cur_col].metric(func.get_name(), round(func.weight, 2))
@@ -180,7 +188,7 @@ def home_page():
                 col1, col2, col3 = st.columns(3)
                 col_list = [col1, col2, col3]
 
-                for index, func in enumerate(rand_algo.functions):
+                for index, func in enumerate(curr_algo.functions):
 
                     name = func.get_name()
 

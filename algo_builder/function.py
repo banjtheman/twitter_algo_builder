@@ -40,7 +40,7 @@ class Function:
         """
         try:
             result = self.code(tweet)
-            print(self.code)
+            # print(self.code)
         except Exception as error:
             raise RuntimeError(error)
 
