@@ -4,5 +4,5 @@ streamlit-yellowbrick
 streamlit
 plotly
 altair
-twitter
+python-twitter
 textblob

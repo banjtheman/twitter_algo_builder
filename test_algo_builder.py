@@ -59,47 +59,6 @@ def get_home_timeline(num_tweets: int = 20) -> List[Dict[str, Any]]:
     return twitter_json_list
 
 
-def process_tweets(tweets: List[Dict[str, Any]], algo: Algorithm):
-    """
-    Purpose:
-        Run the algorithm on the tweets
-    Args:
-        tweets - tweets from API
-        algo - Algorithm
-    Returns:
-        algo_tweets - sorted tweets based on algo
-    """
-
-    tweet_values_list = []
-
-    for tweet in tweets:
-        tweet_values_json = {}
-        algo_score = 0  # The score for the algo
-
-        # Run all the functions in the algorithm
-        for func in algo.functions:
-            # print(func.get_name())
-
-            curr_value = func.run_code(tweet)  # Run the code on the tweet
-            tweet_values_json[func.get_name()] = curr_value  # store value
-
-            # Add to final score
-            algo_score += curr_value
-
-        tweet_values_json["algo_score"] = algo_score
-        tweet_values_json["twitter_url"] = tweet["twitter_url"]
-
-        # Add to list
-        tweet_values_list.append(tweet_values_json)
-
-    # Turn list to df
-    df = pd.json_normalize(tweet_values_list)
-
-    # Sort df
-    sorted_df = df.sort_values(by=["algo_score"], ascending=False)
-
-    return sorted_df
-
 
 def main():
     """
@@ -120,7 +79,7 @@ def main():
     rand_algo.save_algo()
 
     # Run algo on tweets
-    df = process_tweets(timeline_tweets, rand_algo)
+    df = rand_algo.process_tweets(timeline_tweets)
 
     print(df)
     print("Done and Done")

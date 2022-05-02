@@ -3,6 +3,7 @@ import logging
 
 # my imports
 import algos
+import algo_builder.algorithm as algo
 
 
 def main():
@@ -21,6 +22,10 @@ def main():
     # my_algo = algos.SimpleAlgo.define_algo()
     my_algo = algos.Random_3_algo.define_algo()
     my_algo.save_algo()
+
+    # Load algo
+    loaded_algo = algo.load_algo('saved_algos/Random algo.algo')
+    print(f"Loaded algo {loaded_algo.name}")
 
     print("Done and Done")
 

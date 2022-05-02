@@ -9,14 +9,14 @@ from algo_builder.algorithm import Algorithm
 def rand_func(tweet):
     """
     Purpose:
-        Return a random number between 0 and 100
+        Return a random number between -100 and 100
     Args:
         N/A
     Returns:
         random number
     """
 
-    return random.randint(0, 100)
+    return random.randint(-100, 100)
 
 
 class Random_3_algo(TwitterAlgorithm):

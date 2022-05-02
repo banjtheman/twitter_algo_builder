@@ -7,6 +7,7 @@ from typing import Any, Dict, List
 from .weighted_function import WeightedFunction
 import pickle
 from . import utils
+import pandas as pd
 
 
 class Algorithm:
@@ -25,7 +26,8 @@ class Algorithm:
         self.name = name
         self.desc = desc
         self.functions = functions
-
+        
+    # TODO do we need this function?
     def run_algo(self, tweet: Dict[str, Any]) -> int:
         """
         Purpose:
@@ -70,14 +72,56 @@ class Algorithm:
         utils.save_json(algo_json_file, algo_json)
 
 
+    def process_tweets(self, tweets: List[Dict[str, Any]]) -> pd.DataFrame:
+        """
+        Purpose:
+            Run the algorithm on the tweets
+        Args:
+            tweets - List of tweets
+        Returns:
+            algo_tweets - sorted tweets based on algo
+        """
+
+        tweet_values_list = []
+
+        for tweet in tweets:
+            tweet_values_json = {}
+            algo_score = 0  # The score for the algo
+
+            # Run all the functions in the algorithm
+            for func in self.functions:
+                # print(func.get_name())
+
+                curr_value = func.run_code(tweet)  # Run the code on the tweet
+                tweet_values_json[func.get_name()] = curr_value  # store value
+
+                # Add to final score
+                algo_score += curr_value
+
+            tweet_values_json["algo_score"] = algo_score
+            tweet_values_json["twitter_url"] = tweet["twitter_url"]
+
+            # Add to list
+            tweet_values_list.append(tweet_values_json)
+
+        # Turn list to df
+        df = pd.json_normalize(tweet_values_list)
+
+        # Sort df
+        sorted_df = df.sort_values(by=["algo_score"], ascending=False)
+
+        return sorted_df
+
+
+
 def load_algo(filename) -> Algorithm:
     """
     Purpose:
-        Save the algo
+        Load the algo
     Args:
-        filename: name to save
+        filename: file to load
     Returns:
-        result: The rating of your tweet
+        Algorithm: The loaded Algorithm
     """
     # read the pickle file
     picklefile = open(filename, "rb")
