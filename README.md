@@ -22,14 +22,14 @@ git clone https://github.com/banjtheman/twitter_algo_builder
 pip install -r requirements.txt
 ```
 
-### Twiiter API
+### Twitter API
 
-You will need the [Twitter v1.1](https://developer.twitter.com/en/docs/twitter-api/v1) API to build your algorithm agasint your home timeline.  
+You will need the [Twitter v1.1](https://developer.twitter.com/en/docs/twitter-api/v1) API to build your algorithm against your home timeline.  
 You can sign up here https://developer.twitter.com/en/docs/twitter-api
 
 ### Get Tweets
 
-Once you have API access, you can get a list of tweets from your home timeline with the [/home_timeline](https://developer.twitter.com/en/docs/twitter-api/v1/tweets/timelines/api-reference/get-statuses-home_timeline) endpoint. The following code is how we get a list of tweets to be proccesed by your algorithm.
+Once you have API access, you can get a list of tweets from your home timeline with the [/home_timeline](https://developer.twitter.com/en/docs/twitter-api/v1/tweets/timelines/api-reference/get-statuses-home_timeline) endpoint. The following code is how we get a list of tweets to be processed by your algorithm.
 
 ```python
 from typing import Dict, Any, List
@@ -82,15 +82,15 @@ def get_home_timeline(num_tweets: int = 20) -> List[Dict[str, Any]]:
 
 ### Creating an algorithm
 
-An algorithm scores each twet, and the higher the tweet is, the higher it shows on your timeline. Currently Twitter's algorithm is a ["black box"](https://en.wikipedia.org/wiki/Black-box_testing) as we dont know what is on the inside and can only make guesses on how it works. This repo provides a mechanism to create your own algorithm so you could view your timeline based on what you deem as important.
+An algorithm scores each tweet, and the higher the tweet is, the higher it shows on your timeline. Currently Twitter's algorithm is a ["black box"](https://en.wikipedia.org/wiki/Black-box_testing) as we don’t know what is on the inside and can only make guesses on how it works. This repo provides a mechanism to create your own algorithm so you could view your timeline based on what you deem as important.
 
-This framework for the algorithm is based on [Functions](algo_builder/function.py) which are self defined proccess that score a tweet from -100 to 100. The higher score, the higher the tweets shows up on the timeline. Example functions include sentiment,tweet length, number of followers, and other attributes. Each of these functions is then weighted to create a [`Weighted Function`](algo_builder/weighted_function.py). This allows for certain features to be more important. For example perhaps I want sentiment to be 3x more important that number of followers in deterimined what is shown in my feed first.
+This framework for the algorithm is based on [Functions](algo_builder/function.py) which are self-defined process that score a tweet from -100 to 100. The higher score, the higher the tweet appears on the timeline. Example functions include sentiment, tweet length, number of followers, and other attributes. Each of these functions is then weighted to create a [`Weighted Function`](algo_builder/weighted_function.py). This allows for certain features to be more important. For example perhaps I want sentiment to be 3x more important that number of followers in determined what is shown in my feed first.
 
 A collection of `Weighted Functions` creates an `Algorithm` which will sum the score of all the functions based on the tweet's data.
 
 #### Functions
 
-The `Function` class requires a Name, description and the code to run. The code should take in one paramter which is the tweet data for an individual tweet. The code must return a number between -100 and 100 or a ValueError will be thrown. Here is an example Function of code that just returns a random number.
+The `Function` class requires a Name, description and the code to run. The code should take in one parameter which is the tweet data for an individual tweet. The code must return a number between -100 and 100 or a ValueError will be thrown. Here is an example Function of code that just returns a random number.
 
 ```python
 import random
@@ -116,7 +116,7 @@ rand_func_action = Function(
 
 #### Weighted Functions
 
-The `Weighted Function` class requires a Weight, Function and a Name. The Weight is a float that will be multipied to the score the function returns.
+The `Weighted Function` class requires a Weight, Function and a Name. The Weight is a float that will be multiplied to the score the function returns.
 Here is an example of three Weighted Functions using the `rand_func` Function from above.
 
 ```python
@@ -143,7 +143,7 @@ rand_algo = Algorithm(
 
 ##### Saving Algorithms
 
-To make your Algorithm resuable, you can save the output using the `save_algo` function in [algorithm.py](https://github.com/banjtheman/twitter_algo_builder/blob/main/algo_builder/algorithm.py#L50-L72)
+To make your Algorithm reusable, you can save the output using the `save_algo` function in [algorithm.py](https://github.com/banjtheman/twitter_algo_builder/blob/main/algo_builder/algorithm.py#L50-L72)
 
 ```python
 from algo_builder.algorithm import Algorithm
@@ -162,7 +162,7 @@ rand_algo.save_algo(folder="saved_algos")
 This will produce two artifacts in the passed in folder.
 
 - ALGONAME.algo - This is the pickled class of the Algorithm
-- ALGONAME.json - This is a json file with the Algorithm metadata
+- ALGONAME.json - This is a JSON file with the Algorithm metadata
 
 ##### Loading Algorithms
 
@@ -212,7 +212,7 @@ rand_func2,rand_func3,rand_func5,algo_score,twitter_url
 -16.2,-10.2,38.0,11.600000000000001,...
 ```
 
-To run an end to end example you can run the the [test_algo_builder.py](https://github.com/banjtheman/twitter_algo_builder/blob/main/test_algo_builder.py) script.
+To run an end to end example you can run the [test_algo_builder.py](https://github.com/banjtheman/twitter_algo_builder/blob/main/test_algo_builder.py) script.
 
 ```bash
 export CONSUMER_KEY=INSERT_YOUR_VALUE
@@ -224,7 +224,7 @@ python test_algo_builder.py
 
 ### View your timeline with Streamlit
 
-Using [Streamlit](https://streamlit.io/) the [algo_viewer_st.py](https://github.com/banjtheman/twitter_algo_builder/blob/main/algo_viewer_st.py) script provides a User interface that allows us to visualze how our timeline would be using the saved algorithms.
+Using [Streamlit](https://streamlit.io/) the [algo_viewer_st.py](https://github.com/banjtheman/twitter_algo_builder/blob/main/algo_viewer_st.py) script provides a User interface that allows us to visualize how our timeline would be using the saved algorithms.
 
 ![Streamlit algo viewer](images/twitter_algo_streamlit1.png)
 
@@ -246,6 +246,6 @@ streamlit run algo_viewer_st.py
 
 Here are some example algorithms
 
-### Postive + Tweet Length
+### Positive + Tweet Length
 
-This [Simple Algorithm](https://github.com/banjtheman/twitter_algo_builder/blob/main/algos/simple_algo.py) scores tweets based on how postive the text is and how many characters are being used.
+This [Simple Algorithm](https://github.com/banjtheman/twitter_algo_builder/blob/main/algos/simple_algo.py) scores tweets based on how positive the text is and how many characters are being used.
