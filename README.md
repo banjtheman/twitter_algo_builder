@@ -141,30 +141,111 @@ rand_algo = Algorithm(
 )
 ```
 
-#### Saving and Loading Algorithms
+##### Saving Algorithms
 
+To make your Algorithm resuable, you can save the output using the `save_algo` function in [algorithm.py](https://github.com/banjtheman/twitter_algo_builder/blob/main/algo_builder/algorithm.py#L50-L72)
 
+```python
+from algo_builder.algorithm import Algorithm
 
+print("Saving algorithm")
+
+rand_algo = Algorithm(
+    "Random algo",
+    "Return random score",
+    [weighted_func2, weighted_func3, weighted_func5],
+)
+
+rand_algo.save_algo(folder="saved_algos")
+```
+
+This will produce two artifacts in the passed in folder.
+
+- ALGONAME.algo - This is the pickled class of the Algorithm
+- ALGONAME.json - This is a json file with the Algorithm metadata
+
+##### Loading Algorithms
+
+To load your Algorithm, simply use the `load_algo` function in [algorithm.py](https://github.com/banjtheman/twitter_algo_builder/blob/main/algo_builder/algorithm.py#L117-L132)
+
+on a .algo file.
+
+```python
+from algo_builder.algorithm import Algorithm
+
+# Load algo
+loaded_algo = Algorithm.load_algo('saved_algos/Random algo.algo')
+print(f"Loaded algo {loaded_algo.name}")
+
+print("Done and Done")
+```
 
 #### Running the Algorithm
 
+The `process_tweets` function in [algorithm.py](https://github.com/banjtheman/twitter_algo_builder/blob/main/algo_builder/algorithm.py#L75-L113) takes in a list of tweets to return a sorted pandas dataframe with each of the weighted functions score and the overall algorithm's score.
 
+```python
+print("Running algorithm on Tweets")
 
+# Load Tweets
+timeline_tweets = get_home_timeline()
+
+# Define Algo
+rand_algo = algos.SimpleAlgo.define_algo()
+rand_algo.save_algo()
+
+# Run algo on tweets
+df = rand_algo.process_tweets(timeline_tweets)
+
+print(df)
+print("Done and Done")
+```
+
+Here is an example csv
+
+```
+rand_func2,rand_func3,rand_func5,algo_score,twitter_url
+17.6,6.0,36.0,59.6,...
+6.4,14.399999999999999,10.5,31.299999999999997,...
+-13.200000000000001,18.9,15.5,21.199999999999996,...
+-8.200000000000001,6.0,14.0,11.799999999999999,...
+-16.2,-10.2,38.0,11.600000000000001,...
+```
+
+To run an end to end example you can run the the [test_algo_builder.py](https://github.com/banjtheman/twitter_algo_builder/blob/main/test_algo_builder.py) script.
+
+```bash
+export CONSUMER_KEY=INSERT_YOUR_VALUE
+export CONSUMER_SECRET=INSERT_YOUR_VALUE
+export ACCESS_TOKEN_KEY=INSERT_YOUR_VALUE
+export ACCESS_TOKEN_SECRET=INSERT_YOUR_VALUE
+python test_algo_builder.py
+```
 
 ### View your timeline with Streamlit
 
+Using [Streamlit](https://streamlit.io/) the [algo_viewer_st.py](https://github.com/banjtheman/twitter_algo_builder/blob/main/algo_viewer_st.py) script provides a User interface that allows us to visualze how our timeline would be using the saved algorithms.
 
+![Streamlit algo viewer](images/twitter_algo_streamlit1.png)
 
+The metrics for each tweet can be viewed, to let you know why it appeared higher in your timeline.
 
+![Streamlit algo viewer](images/twitter_algo_streamlit2.png)
+
+To start run the following, then view `http://localhost:8501/` in your browser.
+
+```bash
+export CONSUMER_KEY=INSERT_YOUR_VALUE
+export CONSUMER_SECRET=INSERT_YOUR_VALUE
+export ACCESS_TOKEN_KEY=INSERT_YOUR_VALUE
+export ACCESS_TOKEN_SECRET=INSERT_YOUR_VALUE
+streamlit run algo_viewer_st.py
+```
 
 ### Example Algorithms
 
 Here are some example algorithms
 
-### Weighted Random Algo
-
-TODO
-
 ### Postive + Tweet Length
 
-TODO
+This [Simple Algorithm](https://github.com/banjtheman/twitter_algo_builder/blob/main/algos/simple_algo.py) scores tweets based on how postive the text is and how many characters are being used.

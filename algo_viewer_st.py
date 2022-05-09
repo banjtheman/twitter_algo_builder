@@ -14,9 +14,6 @@ import streamlit.components.v1 as components
 from yellowbrick.target import FeatureCorrelation
 import pandas as pd
 
-# import plotly.express as px
-# import altair as alt
-
 # project imports
 import test_algo_builder
 import algo_builder.utils as utils
@@ -158,7 +155,7 @@ def home_page():
         st.subheader(curr_algo.desc)
 
         # Run algo on tweets
-        df = test_algo_builder.process_tweets(raw_tweets, curr_algo)
+        df = curr_algo.process_tweets(raw_tweets)
 
         # st.write(sorted_df)
         st.subheader("Given Input Weights")

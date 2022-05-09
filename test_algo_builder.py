@@ -3,11 +3,10 @@ import logging
 import os
 from typing import Dict, Any, List
 
-import pandas as pd
+# 3rd party imports
 import twitter
 
-# my imports
-from algo_builder.algorithm import Algorithm
+# project imports
 import algos
 
 
@@ -75,11 +74,12 @@ def main():
     timeline_tweets = get_home_timeline()
 
     # Define Algo
-    rand_algo = algos.SimpleAlgo.define_algo()
+    rand_algo = algos.Random_3_algo.define_algo()
     rand_algo.save_algo()
 
     # Run algo on tweets
     df = rand_algo.process_tweets(timeline_tweets)
+    #df.to_csv("test.csv",index=False) # Save csv output
 
     print(df)
     print("Done and Done")
